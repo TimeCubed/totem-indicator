@@ -1,0 +1,41 @@
+{
+	"schemaVersion": 1,
+	"id": "totem-indicator",
+	"version": "${version}",
+	"name": "Totem Indicator",
+	"description": "Shows a red overlay on your screen when you don't have a totem in your offhand",
+	"authors": [
+		"TimeSquared"
+	],
+	"contact": {
+		"homepage": "https://modrinth.com/mod/totem-indicator",
+		"sources": "https://github.com/TimeCubed/totem-indicator"
+	},
+	"license": "MIT",
+	"icon": "assets/totem-indicator/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"io.github.timesquared.totemindicator.MainServer"
+		],
+		"client": [
+			"io.github.timesquared.totemindicator.MainClient"
+		]
+	},
+	"mixins": [
+		"totem-indicator.mixins.json",
+		{
+			"config": "totem-indicator.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.14.21",
+		"minecraft": ">=1.19",
+		"java": ">=17",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
+}
