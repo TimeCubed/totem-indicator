@@ -3,9 +3,12 @@
 	"id": "totem-indicator",
 	"version": "${version}",
 	"name": "Totem Indicator",
-	"description": "Shows a red overlay on your screen when you don't have a totem in your offhand",
+	"description": "Shows an overlay on your screen when you don't have a totem in your (off)hand",
 	"authors": [
 		"TimeSquared"
+	],
+	"contributors": [
+		"MrEngMan"
 	],
 	"contact": {
 		"homepage": "https://modrinth.com/mod/totem-indicator",
@@ -20,6 +23,9 @@
 		],
 		"client": [
 			"io.github.timesquared.totemindicator.MainClient"
+		],
+		"modmenu": [
+			"io.github.timesquared.totemindicator.ModMenuIntegration"
 		]
 	},
 	"mixins": [
@@ -31,11 +37,9 @@
 	],
 	"depends": {
 		"fabricloader": ">=0.14.21",
-		"minecraft": ">=1.19",
+		"minecraft": ">=1.20",
 		"java": ">=17",
-		"fabric-api": "*"
-	},
-	"suggests": {
-		"another-mod": "*"
+		"fabric-api": "*",
+		"tulip": "*"
 	}
 }
