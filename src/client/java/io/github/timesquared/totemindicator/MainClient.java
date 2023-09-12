@@ -49,7 +49,7 @@ public class MainClient implements ClientModInitializer {
 			ItemStack offhandStack = mc.player.getOffHandStack();
 			ItemStack mainHandStack = mc.player.getMainHandStack();
 			
-			if (!isConfiguring && offhandStack.getItem() != Items.TOTEM_OF_UNDYING && mainHandStack.getItem() != Items.TOTEM_OF_UNDYING && !(tulipInstance.getBoolean("disabled"))) {
+			if (!isConfiguring && !mc.player.isCreative() && !mc.player.isSpectator() && offhandStack.getItem() != Items.TOTEM_OF_UNDYING && mainHandStack.getItem() != Items.TOTEM_OF_UNDYING && !(tulipInstance.getBoolean("disabled"))) {
 
 				int r = tulipInstance.getInt("red");
 				int g = tulipInstance.getInt("green");
