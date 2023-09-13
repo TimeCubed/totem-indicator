@@ -18,6 +18,7 @@ repositories {
 	// for more information about repositories.
 
 	maven { url 'https://jitpack.io' }
+    maven { url "https://maven.terraformersmc.com/releases/" }
 }
 
 loom {
@@ -47,6 +48,7 @@ dependencies {
 	// modImplementation "net.fabricmc.fabric-api:fabric-api-deprecated:${project.fabric_version}"
 
 	modImplementation "com.github.TimeCubed:tulip-config-manager:1.2.0-1.19.x"
+    modApi "com.terraformersmc:modmenu:${project.modmenu_version}"
 }
 
 processResources {
