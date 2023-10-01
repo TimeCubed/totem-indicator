@@ -23,6 +23,7 @@ public class ConfigScreen extends Screen {
 	TextFieldWidget positionYTextField;
 	ButtonWidget disableButton;
 	ButtonWidget drawTotemButton;
+	ButtonWidget activatedOnButton;
 	ButtonWidget hideUIButton;
 	boolean isDisabled;
 	boolean drawTotem;
@@ -45,6 +46,7 @@ public class ConfigScreen extends Screen {
 		String textSet = MainClient.tulipInstance.getString("text");
 		int positionXSet = MainClient.tulipInstance.getInt("x_position");
 		int positionYSet = MainClient.tulipInstance.getInt("y_position");
+		final MainClient.ActivatedOn[] activatedOn = {MainClient.ActivatedOn.valueOf(MainClient.tulipInstance.getString("activated"))};
 
 		redSlider = new SettingsSlider(this.width / 2 - 30 - 90, this.height / 2 - 50 - 5, 100, 20, rSet, 0, 255);
 		greenSlider = new SettingsSlider(this.width / 2 - 30 - 90, this.height / 2 - 25 - 5, 100, 20, gSet, 0, 255);
@@ -75,6 +77,12 @@ public class ConfigScreen extends Screen {
 		}).dimensions(this.width / 2 - 75 + 90, this.height / 2 - 80, 150, 20).build();
 		this.addDrawableChild(drawTotemButton);
 
+		activatedOnButton = ButtonWidget.builder(Text.of("Active: " + activatedOn[0]), button -> {
+			activatedOn[0] = activatedOn[0].next();
+			button.setMessage(Text.of("Active: " + activatedOn[0]));
+		}).dimensions(this.width / 2 - 75 + 90, this.height / 2 + 25 - 5, 150, 20).build();
+		this.addDrawableChild(activatedOnButton);
+
 		textWidget = new TextFieldWidget(mc.textRenderer, this.width / 2 - 30 + 90, this.height / 2 - 50 - 5, 100, 20, Text.of("stringfield"));
 		textWidget.setMaxLength(1024);
 		textWidget.setText(String.valueOf(textSet));
@@ -91,6 +99,7 @@ public class ConfigScreen extends Screen {
 			drawTotemButton.visible = !hideUI;
 			positionXTextField.visible = !hideUI;
 			positionYTextField.visible = !hideUI;
+			activatedOnButton.visible = !hideUI;
 			textWidget.visible = !hideUI;
 
 			button.setMessage(Text.of(hideUI ? "Show UI" : "Hide UI"));
@@ -120,6 +129,7 @@ public class ConfigScreen extends Screen {
 			MainClient.tulipInstance.saveProperty("text", textToSet);
 			MainClient.tulipInstance.saveProperty("disabled", isDisabled);
 			MainClient.tulipInstance.saveProperty("draw_totem", drawTotem);
+			MainClient.tulipInstance.saveProperty("activated", activatedOn[0].name());
 
 			MainClient.tulipInstance.save();
 

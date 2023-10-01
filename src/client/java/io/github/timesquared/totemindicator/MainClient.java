@@ -4,6 +4,7 @@ import io.github.timecubed.tulip.TulipConfigManager;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.item.ItemStack;
@@ -18,7 +19,37 @@ public class MainClient implements ClientModInitializer {
 	public static final MinecraftClient mc = MinecraftClient.getInstance();
 	public static TulipConfigManager tulipInstance;
 	public static boolean isConfiguring = false;
-	
+	public static boolean isMultiplayer = false;
+
+	public enum ActivatedOn {
+		MULTIPLAYER_ONLY,
+		SINGLEPLAYER_ONLY,
+		BOTH;
+
+		public boolean matches(boolean isMultiplayer) {
+			return this == BOTH ||
+					this == MULTIPLAYER_ONLY && isMultiplayer ||
+					this == SINGLEPLAYER_ONLY && !isMultiplayer;
+		}
+
+		public ActivatedOn next() {
+			return switch (this) {
+				case MULTIPLAYER_ONLY -> SINGLEPLAYER_ONLY;
+				case SINGLEPLAYER_ONLY -> BOTH;
+				default -> MULTIPLAYER_ONLY;
+			};
+		}
+
+		public String toString() {
+            return switch (this) {
+                case MULTIPLAYER_ONLY -> "Multiplayer";
+                case SINGLEPLAYER_ONLY -> "Singleplayer";
+                default -> "Both MP & SP";
+            };
+		}
+
+	}
+
 	@Override
 	public void onInitializeClient() {
 		tulipInstance = new TulipConfigManager("totem-indicator", false);
@@ -32,6 +63,7 @@ public class MainClient implements ClientModInitializer {
 		tulipInstance.saveProperty("text", "NO TOTEM");
 		tulipInstance.saveProperty("x_position", 0);
 		tulipInstance.saveProperty("y_position", 20);
+		tulipInstance.saveProperty("activated", ActivatedOn.BOTH.name());
 		
 		tulipInstance.load();
 		
@@ -39,6 +71,8 @@ public class MainClient implements ClientModInitializer {
 			mc.send(() -> mc.setScreen(new ConfigScreen(Text.of("config"), null)));
 			return 1;
 		}))));
+
+		ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> isMultiplayer = !client.isIntegratedServerRunning());
 		
 		MainServer.LOGGER.info("Initialized mod successfully!");
 	}
@@ -48,8 +82,9 @@ public class MainClient implements ClientModInitializer {
 			
 			ItemStack offhandStack = mc.player.getOffHandStack();
 			ItemStack mainHandStack = mc.player.getMainHandStack();
+			ActivatedOn activatedOn = ActivatedOn.valueOf(tulipInstance.getString("activated"));
 			
-			if (!isConfiguring && !mc.player.isCreative() && !mc.player.isSpectator() && offhandStack.getItem() != Items.TOTEM_OF_UNDYING && mainHandStack.getItem() != Items.TOTEM_OF_UNDYING && !(tulipInstance.getBoolean("disabled"))) {
+			if (!isConfiguring && activatedOn.matches(isMultiplayer) && !mc.player.isCreative() && !mc.player.isSpectator() && offhandStack.getItem() != Items.TOTEM_OF_UNDYING && mainHandStack.getItem() != Items.TOTEM_OF_UNDYING && !(tulipInstance.getBoolean("disabled"))) {
 
 				int r = tulipInstance.getInt("red");
 				int g = tulipInstance.getInt("green");
